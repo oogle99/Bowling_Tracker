@@ -7,7 +7,11 @@ from app.models import Splits
 
 class NewBettingPageForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
-    submit = SubmitField('Create New Betting Page')
+    betting_submit = SubmitField('Create New Betting Page')
+
+class NewScoringPageForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()])
+    scoring_submit = SubmitField('Create New Scoring Page')
 
 class NewSplitForm(FlaskForm):
     layout = StringField('Split Layout', validators=[DataRequired()])
