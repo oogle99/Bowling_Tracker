@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="betting-layout">
+    <div class="betting-sidebar">
+        <h2>Dates</h2>
+        <ul>
+            {% for item in all_dates %}
+            <li>
+                <a href="{{ url_for('betting_page', date=item.date) }}">
+                    {{ item.display_date }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="betting-content">
+        {% if betting %}
+        <h1>Betting for {{ betting.display_date }}</h1>
+        {% else %}
+        <h1>Select a Betting Date</h1>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

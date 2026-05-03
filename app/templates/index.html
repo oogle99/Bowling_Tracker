@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Hi, {{ user.username }}!</h1>
+{% for post in posts %}
+<div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+{% endfor %}
+
+<h1>Create New Betting Page</h1>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.date.label }}<br>
+        {{ form.date(size=32) }}<br>
+        {% for error in form.date.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

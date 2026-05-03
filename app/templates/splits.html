@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-layout">
+    <div class="form-panel">
+        <h1>Create New Split</h2>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.layout.label }}<br>
+                {{ form.layout(size=20) }}<br>
+                {% for error in form.layout.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.value.label }}<br>
+                {{ form.value }}<br>
+                {% for error in form.value.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+
+    <div class="table-panel">
+        <h1>Splits Table</h1>
+
+        {% for group in split_groups %}
+        <table class="split-table">
+            <tr>
+                <th>Layout</th>
+                <th>Value</th>
+            </tr>
+
+            {% for split in group %}
+            <tr>
+                <td>{{ split.layout }}</td>
+                <td style="text-align: right;">${{ split.value }}</td>
+                <td>
+                    <a href="{{ url_for('delete_split', id=split.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

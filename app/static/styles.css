@@ -1,0 +1,49 @@
+.page-layout {
+    display: flex;
+    gap: 30px
+}
+
+.form-panel {
+    width: 300px;
+}
+
+.table-panel {
+    flex: 1;
+    gap: 20px;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+table {
+    float: left
+}
+
+.split-table {
+    border-collapse: collapse;
+    min-width: 200px;
+}
+
+.split-table th,
+.split-table td {
+    border: 1px solid black;
+    padding: 6px 10px;
+}
+
+.betting-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.betting-sidebar {
+    width: 180px;
+    min-width: 180px;
+    border-right: 1px solid black;
+    padding-right: 15px;
+}
+
+.betting-content {
+    flex: 1;
+    padding-left: 15px;
+}
