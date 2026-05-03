@@ -21,6 +21,71 @@
         {% else %}
         <h1>Select a Betting Date</h1>
         {% endif %}
+
+        <form action="" method="post">
+            {% for i in range(1, 5) %}
+            <div class="scoreboard">
+                <div class="bowler-card">Bowler {{ i }}</div>
+
+                {% for j in range(1, 10) %}
+                <div class="frame-card">
+                    <div class="frame-header">{{ j }}</div>
+
+                    <div class="roll-row">
+                        <input type="text" name="bowler{{ i }}_frame{{ j }}_roll1" maxlength="1"
+                            value="{{ form_state.get('bowler' ~ i ~ '_frame' ~ j ~ '_roll1', '') }}"
+                            oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="bowler{{ i }}_frame{{ j }}_roll2" maxlength="1"
+                            value="{{ form_state.get('bowler' ~ i ~ '_frame' ~ j ~ '_roll2', '') }}"
+                            oninput="this.value = this.value.toUpperCase()">
+                    </div>
+
+                    <div class="frame-result">
+                        {% set bowler_key = 'bowler' ~ i %}
+                        {% set value = None %}
+
+                        {% if totals and bowler_key in totals and (j-1) < totals[bowler_key]|length %}
+                            {% set value = totals[bowler_key][j-1] %}
+                        {% endif %}
+
+                        {{ value if value is not none else '--' }}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="frame-card">
+                    <div class="frame-header">10</div>
+
+                    <div class="roll-row">
+                        <input type="text" name="bowler{{ i }}_frame10_roll1" maxlength="1"
+                            value="{{ form_state.get('bowler' ~ i ~ '_frame10_roll1', '') }}"
+                            oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="bowler{{ i }}_frame10_roll2" maxlength="1"
+                            value="{{ form_state.get('bowler' ~ i ~ '_frame10_roll2', '') }}"
+                            oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="bowler{{ i }}_frame10_roll3" maxlength="1"
+                            value="{{ form_state.get('bowler' ~ i ~ '_frame10_roll3', '') }}"
+                            oninput="this.value = this.value.toUpperCase()">
+                    </div>
+
+                    <div class="frame-result">
+                        {% set bowler_key = 'bowler' ~ i %}
+                        {% set value = None %}
+
+                        {% if totals and bowler_key in totals and (9) < totals[bowler_key]|length %}
+                            {% set value = totals[bowler_key][9] %}
+                        {% endif %}
+
+                        {{ value if value is not none else '--' }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit">Save Scores</button>
+        </form>
     </div>
 </div>
+
+
 {% endblock %}

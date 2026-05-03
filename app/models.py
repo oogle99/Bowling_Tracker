@@ -22,5 +22,5 @@ class Splits(db.Model):
                                               index=True)
     
     def __repr__(self):
-        return '<Split Layout: {}>, <Split Worth: {}>'.format(self.layout, self.amount)
+        return '<Split Layout: {}>, <Split Worth: {}>'.format(self.layout, self.value)
     

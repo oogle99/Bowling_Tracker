@@ -4,6 +4,7 @@ from datetime import datetime
 from app import app, db
 from app.forms import NewBettingPageForm, NewSplitForm
 from app.models import Splits, Betting
+from app.scoring import collect_scores, parse_scores, calculate_all_scores
 from itertools import islice
 
 def chunked(data, size):
@@ -14,18 +15,6 @@ def chunked(data, size):
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    user = {'username': 'Jestin'}
-    posts = [
-        {
-            'author': {'username': 'Rebecca'},
-            'body': 'I am too confident in your coding ability!'
-        },
-        {
-            'author': {'username': 'Jestin'},
-            'body': 'I am going to fail!'
-        }
-    ]
-
     form = NewBettingPageForm()
     if form.validate_on_submit():
         flash('New betting page requested for date {}'
@@ -35,10 +24,10 @@ def index():
         db.session.add(date)
         db.session.commit()
         return redirect(url_for('betting_page', date=date.date))
-    return render_template('index.html', title='Home', user=user, posts=posts, form=form)
+    return render_template('index.html', title='Home', form=form)
 
-@app.route('/betting')
-@app.route('/betting/<date>')
+@app.route('/betting', methods=['GET', 'POST'])
+@app.route('/betting/<date>', methods=['GET', 'POST'])
 def betting_page(date=None):
     all_dates = Betting.query.order_by(Betting.date.asc()).all()
     
@@ -54,7 +43,19 @@ def betting_page(date=None):
         else:
             betting.display_date = datetime.strptime(betting.date, "%Y-%m-%d").strftime("%b %d, %Y")
 
-    return render_template('betting.html', betting=betting, all_dates=all_dates)
+    totals = None
+    raw_input = {}
+    if request.method == "POST":
+        raw_input = request.form.to_dict()
+
+        raw_scores = collect_scores(request.form)
+        parsed_scores = parse_scores(raw_scores)
+        print(parsed_scores)
+
+        totals = calculate_all_scores(parsed_scores)
+        print(totals)
+
+    return render_template('betting.html', betting=betting, all_dates=all_dates, totals=totals, form_state=raw_input)
 
 @app.route('/splits', methods=['GET', 'POST'])
 def splits():

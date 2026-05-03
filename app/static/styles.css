@@ -47,3 +47,52 @@ table {
     flex: 1;
     padding-left: 15px;
 }
+
+.scoreboard {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    border: 1px solid black;
+    width: fit-content;
+    margin-bottom: 4px;
+}
+
+.frame-card {
+    border: 1px solid black;
+    width: calc-size(fit-content, size + 10px);
+    text-align: center;
+}
+
+.frame-header {
+    font-weight: bold;
+}
+
+.frame-result {
+    font-size: 24px;
+}
+
+.roll-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.roll-row input {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.bowler-card {
+    width: 100px;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    font-size: 16px;
+
+    margin-right: 10px;
+}
