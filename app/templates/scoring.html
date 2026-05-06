@@ -16,12 +16,13 @@
     </div>
 
     <div class="scoring-content">
-        {% if scoring %}
-        <h1>Scoring for {{ scoring.display_date }}</h1>
+        {% if game %}
+        <h1>Scoring for {{ game.display_date }}</h1>
         {% else %}
         <h1>Select a Scoring Date</h1>
         {% endif %}
 
+        {% if game %}
         <form action="" method="post">
             {% for i in range(1, 5) %}
             <div class="scoreboard">
@@ -84,6 +85,7 @@
 
             <button type="submit">Save Scores</button>
         </form>
+        {% endif %}
     </div>
 </div>
 

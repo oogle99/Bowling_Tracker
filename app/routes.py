@@ -2,8 +2,8 @@ from flask import abort, render_template, request, url_for, flash, redirect
 import sqlalchemy as sa
 from datetime import datetime
 from app import app, db
-from app.forms import NewBettingPageForm, NewSplitForm, NewScoringPageForm
-from app.models import Splits, Betting, Scoring
+from app.forms import NewSplitForm, NewGameForm
+from app.models import Splits, Game
 from app.scoring import collect_scores, parse_scores, calculate_all_scores
 from itertools import islice
 
@@ -15,62 +15,52 @@ def chunked(data, size):
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    betting_form = NewBettingPageForm()
-    scoring_form = NewScoringPageForm()
+    form = NewGameForm()
 
-    if betting_form.validate_on_submit() and betting_form.betting_submit.data:
-        flash('New betting page requested for date {}'
-              .format(betting_form.date.data)
+    if form.validate_on_submit():
+        flash('New game requested for date {}'
+              .format(form.date.data)
         )
-        betting_date = Betting(date=betting_form.date.data)
-        db.session.add(betting_date)
+
+        game = Game(date=form.date.data)
+        db.session.add(game)
         db.session.commit()
-        return redirect(url_for('betting_page', betting_date=betting_date.date))
-    
-    elif scoring_form.validate_on_submit() and scoring_form.scoring_submit.data:
-        flash('New scoring page requested for date {}'
-              .format(scoring_form.date.data)
-        )
-        scoring_date = Scoring(date=scoring_form.date.data)
-        db.session.add(scoring_date)
-        db.session.commit()
-        return redirect(url_for('scoring_page', scoring_date=scoring_date.date))
-    return render_template('index.html', title='Home', betting_form=betting_form, scoring_form=scoring_form)
+    return render_template('index.html', title='Home', form=form)
 
 @app.route('/betting', methods=['GET', 'POST'])
 @app.route('/betting/<date>', methods=['GET', 'POST'])
 def betting_page(date=None):
-    all_dates = Betting.query.order_by(Betting.date.asc()).all()
+    all_dates = Game.query.order_by(Game.date.asc()).all()
     
     for item in all_dates:
         item.display_date = datetime.strptime(item.date, "%Y-%m-%d").strftime("%b %d, %Y")
 
-    betting = None
+    game = None
     if date:
-        betting = db.first_or_404(sa.select(Betting).where(Betting.date == date))
+        game = db.first_or_404(sa.select(Game).where(Game.date == date))
 
-        if not betting:
+        if not game:
             abort(404)
         else:
-            betting.display_date = datetime.strptime(betting.date, "%Y-%m-%d").strftime("%b %d, %Y")
-    return render_template('betting.html', betting=betting, all_dates=all_dates)
+            game.display_date = datetime.strptime(game.date, "%Y-%m-%d").strftime("%b %d, %Y")
+    return render_template('betting.html', game=game, all_dates=all_dates)
 
 @app.route('/scoring', methods=['GET', 'POST'])
 @app.route('/scoring/<date>', methods=['GET', 'POST'])
 def scoring_page(date=None):
-    all_dates = Scoring.query.order_by(Scoring.date.asc()).all()
+    all_dates = Game.query.order_by(Game.date.asc()).all()
     
     for item in all_dates:
         item.display_date = datetime.strptime(item.date, "%Y-%m-%d").strftime("%b %d, %Y")
 
-    scoring = None
+    game = None
     if date:
-        scoring = db.first_or_404(sa.select(Scoring).where(Scoring.date == date))
+        game = db.first_or_404(sa.select(Game).where(Game.date == date))
 
-        if not scoring:
+        if not game:
             abort(404)
         else:
-            scoring.display_date = datetime.strptime(scoring.date, "%Y-%m-%d").strftime("%b %d, %Y")
+            game.display_date = datetime.strptime(game.date, "%Y-%m-%d").strftime("%b %d, %Y")
 
     totals = None
     raw_input = {}
@@ -84,7 +74,7 @@ def scoring_page(date=None):
         totals = calculate_all_scores(parsed_scores)
         print(totals)
 
-    return render_template('scoring.html', scoring=scoring, all_dates=all_dates, totals=totals, form_state=raw_input)
+    return render_template('scoring.html', game=game, all_dates=all_dates, totals=totals, form_state=raw_input)
 
 
 @app.route('/splits', methods=['GET', 'POST'])

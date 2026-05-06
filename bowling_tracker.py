@@ -1,8 +1,8 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import app, db
-from app.models import Betting, Splits
+from app.models import Game, Splits
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'sa': sa, 'so': so, 'db': db, 'Betting': Betting, 'Splits': Splits}
+    return {'sa': sa, 'so': so, 'db': db, 'Game': Game, 'Splits': Splits}

@@ -16,14 +16,13 @@
     </div>
 
     <div class="betting-content">
-        {% if betting %}
-        <h1>Betting for {{ betting.display_date }}</h1>
+        {% if game %}
+        <h1>Betting for {{ game.display_date }}</h1>
         {% else %}
         <h1>Select a Betting Date</h1>
         {% endif %}
         </form>
     </div>
 </div>
-
 
 {% endblock %}

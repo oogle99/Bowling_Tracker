@@ -1,29 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Create New Betting Page</h1>
+<h1>Create New Game</h1>
 <form action="" method="post" novalidate>
-    {{ betting_form.hidden_tag() }}
+    {{ form.hidden_tag() }}
     <p>
-        {{ betting_form.date.label }}<br>
-        {{ betting_form.date(size=32) }}<br>
-        {% for error in betting_form.date.errors %}
+        {{ form.date.label }}<br>
+        {{ form.date(size=32) }}<br>
+        {% for error in form.date.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
-    <p>{{ betting_form.betting_submit() }}</p>
-</form>
-
-<h1>Create New Scoring Page</h1>
-<form action="" method="post" novalidate>
-    {{ scoring_form.hidden_tag() }}
-    <p>
-        {{ scoring_form.date.label }}<br>
-        {{ scoring_form.date(size=32) }}<br>
-        {% for error in scoring_form.date.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ scoring_form.scoring_submit() }}</p>
+    <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}

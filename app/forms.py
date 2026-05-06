@@ -3,15 +3,17 @@ from wtforms import StringField, SubmitField, DateField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 import sqlalchemy as sa
 from app import db
-from app.models import Splits
+from app.models import Splits, Game
 
-class NewBettingPageForm(FlaskForm):
+class NewGameForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
-    betting_submit = SubmitField('Create New Betting Page')
+    submit = SubmitField('Create New Game')
 
-class NewScoringPageForm(FlaskForm):
-    date = DateField('Date', validators=[DataRequired()])
-    scoring_submit = SubmitField('Create New Scoring Page')
+    def validate_date(self, date):
+        game = db.session.scalar(sa.select(Game).where(
+            Game.date == date.data))
+        if game is not None:
+            raise ValidationError('Date already exists!')
 
 class NewSplitForm(FlaskForm):
     layout = StringField('Split Layout', validators=[DataRequired()])
