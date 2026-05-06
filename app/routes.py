@@ -25,43 +25,37 @@ def index():
         game = Game(date=form.date.data)
         db.session.add(game)
         db.session.commit()
-    return render_template('index.html', title='Home', form=form)
+        return redirect(url_for('index'))
+    
+    games = db.session.scalars(sa.select(Game).order_by(Game.date.desc())).all()
+
+    return render_template('index.html', title='Home', form=form, games=games)
 
 @app.route('/betting', methods=['GET', 'POST'])
-@app.route('/betting/<date>', methods=['GET', 'POST'])
-def betting_page(date=None):
-    all_dates = Game.query.order_by(Game.date.asc()).all()
-    
-    for item in all_dates:
-        item.display_date = datetime.strptime(item.date, "%Y-%m-%d").strftime("%b %d, %Y")
+@app.route('/betting/<int:game_id>', methods=['GET', 'POST'])
+def betting_page(game_id=None):
+    games = db.session.scalars(sa.select(Game).order_by(Game.date.desc())).all()
 
     game = None
-    if date:
-        game = db.first_or_404(sa.select(Game).where(Game.date == date))
-
+    if game_id:
+        game = db.session.get(Game, game_id)
         if not game:
             abort(404)
-        else:
-            game.display_date = datetime.strptime(game.date, "%Y-%m-%d").strftime("%b %d, %Y")
-    return render_template('betting.html', game=game, all_dates=all_dates)
+
+    return render_template('betting.html', game=game, all_dates=games)
 
 @app.route('/scoring', methods=['GET', 'POST'])
-@app.route('/scoring/<date>', methods=['GET', 'POST'])
-def scoring_page(date=None):
-    all_dates = Game.query.order_by(Game.date.asc()).all()
-    
-    for item in all_dates:
-        item.display_date = datetime.strptime(item.date, "%Y-%m-%d").strftime("%b %d, %Y")
+@app.route('/scoring/<int:game_id>', methods=['GET', 'POST'])
+def scoring_page(game_id=None):
+    games = db.session.scalars(sa.select(Game).order_by(Game.date.asc())).all()
 
     game = None
-    if date:
-        game = db.first_or_404(sa.select(Game).where(Game.date == date))
+    if game_id:
+        game = game = db.session.get(Game, game_id)
 
         if not game:
             abort(404)
-        else:
-            game.display_date = datetime.strptime(game.date, "%Y-%m-%d").strftime("%b %d, %Y")
-
+        
     totals = None
     raw_input = {}
     if request.method == "POST":
@@ -74,7 +68,7 @@ def scoring_page(date=None):
         totals = calculate_all_scores(parsed_scores)
         print(totals)
 
-    return render_template('scoring.html', game=game, all_dates=all_dates, totals=totals, form_state=raw_input)
+    return render_template('scoring.html', game=game, all_dates=games, totals=totals, form_state=raw_input)
 
 
 @app.route('/splits', methods=['GET', 'POST'])

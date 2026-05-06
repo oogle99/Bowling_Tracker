@@ -7,7 +7,7 @@
         <ul>
             {% for item in all_dates %}
             <li>
-                <a href="{{ url_for('scoring_page', date=item.date) }}">
+                <a href="{{ url_for('scoring_page', game_id=item.id) }}">
                     {{ item.display_date }}
                 </a>
             </li>
