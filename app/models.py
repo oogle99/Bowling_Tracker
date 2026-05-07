@@ -10,12 +10,23 @@ class Game(db.Model):
     date: so.Mapped[datetime.date] = so.mapped_column(sa.Date(),
                                             index=True, unique=True)
     
+    form_state: so.Mapped[str] = so.mapped_column(sa.Text(), nullable=True)
+    
     def __repr__(self):
         return '<Date {}>'.format(self.date)
     
     @property
     def display_date(self):
         return self.date.strftime("%b %d, %Y")
+    
+class Score(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+
+    game_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('game.id'))
+
+    bowler_name: so.Mapped[str] = so.mapped_column(sa.String(64))
+
+    frames: so.Mapped[str] = so.mapped_column(sa.Text)
         
 class Splits(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

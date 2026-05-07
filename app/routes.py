@@ -1,9 +1,9 @@
 from flask import abort, render_template, request, url_for, flash, redirect
 import sqlalchemy as sa
-from datetime import datetime
+import json
 from app import app, db
 from app.forms import NewSplitForm, NewGameForm
-from app.models import Splits, Game
+from app.models import Splits, Game, Score
 from app.scoring import collect_scores, parse_scores, calculate_all_scores
 from itertools import islice
 
@@ -50,14 +50,25 @@ def scoring_page(game_id=None):
     games = db.session.scalars(sa.select(Game).order_by(Game.date.asc())).all()
 
     game = None
+    totals = {}
+    raw_input = {}
+    form_state = {}
+    
     if game_id:
         game = game = db.session.get(Game, game_id)
 
         if not game:
             abort(404)
+
+        rows = db.session.scalars(
+            sa.select(Score).where(Score.game_id == game.id)).all()
         
-    totals = None
-    raw_input = {}
+        for r in rows:
+            totals[r.bowler_name] = json.loads(r.frames)
+
+    if game and game.form_state:
+        form_state = json.loads(game.form_state)
+
     if request.method == "POST":
         raw_input = request.form.to_dict()
 
@@ -68,7 +79,25 @@ def scoring_page(game_id=None):
         totals = calculate_all_scores(parsed_scores)
         print(totals)
 
-    return render_template('scoring.html', game=game, all_dates=games, totals=totals, form_state=raw_input)
+        game = db.session.get(Game, game_id)
+        if not game:
+            abort(404)
+
+        game.form_state = json.dumps(raw_input)
+        db.session.query(Score).filter(Score.game_id == game.id).delete()
+
+        for bowler, frames in totals.items():
+            db.session.add(Score(
+                game_id=game.id,
+                bowler_name=bowler,
+                frames=json.dumps(frames)
+            ))
+            
+        db.session.commit()
+
+        return redirect(url_for('scoring_page', game_id=game.id))
+
+    return render_template('scoring.html', game=game, all_dates=games, totals=totals, form_state=form_state)
 
 
 @app.route('/splits', methods=['GET', 'POST'])
