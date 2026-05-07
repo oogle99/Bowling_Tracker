@@ -16,12 +16,27 @@
 
 <h2>Games</h2>
 
-{% for game in games %}
-    <div>
-        {{ game.display_date }}
+<ul>
+    {% for series in series_list %}
+    <li>
+        <strong>{{ series.display_date }}</strong>
 
-        <a href="{{ url_for('betting_page', game_id=game.id) }}">Betting</a>
-        <a href="{{ url_for('scoring_page', game_id=game.id) }}">Scoring</a>
-    </div>
-{% endfor %}
+        <ul>
+            {% for game in series.games %}
+            <li>
+                Game {{ game.game_number }}
+                -
+                <a href="{{ url_for('scoring_page', game_id=game.id) }}">
+                    Scoring
+                </a>
+                /
+                <a href="{{ url_for('betting_page', game_id=game.id) }}">
+                    Betting
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

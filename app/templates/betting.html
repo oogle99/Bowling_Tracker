@@ -4,20 +4,37 @@
 <div class="betting-layout">
     <div class="betting-sidebar">
         <h2>Dates</h2>
+
         <ul>
-            {% for item in all_dates %}
+            {% for series in series_list %}
+
             <li>
-                <a href="{{ url_for('betting_page', game_id=item.id) }}">
-                    {{ item.display_date }}
-                </a>
+                <strong>{{ series.display_date }}</strong>
+
+                <ul>
+                    {% for item in series.games %}
+
+                    <li>
+                        <a href="{{ url_for('betting_page', game_id=item.id) }}">
+                            Game {{ item.game_number }}
+                        </a>
+                    </li>
+
+                    {% endfor %}
+                </ul>
             </li>
+
             {% endfor %}
         </ul>
     </div>
 
     <div class="betting-content">
         {% if game %}
-        <h1>Betting for {{ game.display_date }}</h1>
+        <h1>
+            Betting for
+            {{ game.series.display_date }}
+            - Game {{ game.game_number }}
+        </h1>
         {% else %}
         <h1>Select a Betting Date</h1>
         {% endif %}
